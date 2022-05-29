@@ -1,14 +1,73 @@
 <template>
-    <div class="container">
-        <h1>Inertiajs is {{ test }}</h1>
+    <Layout :user="user">
+        <div class="container-fluid">
+            <div class="row justify-content-center align-items-center" style="min-height: 90vh; background-color: #7615a5;">
+                <div class="col-12 col-md-4">
+                    <div class="card bg-white p-3">
+                        <h3 class="mb-0">Rooms</h3>
+                        <hr>
+                        <div class="my-3" style="max-height: 500px; overflow: auto">
+                            <div v-for="room in rooms" :key="room.id" class="border p-2 rounded my-2">
+                                <Link :href="route('chat', room.id)" class="text-dark" style="text-decoration: none">
+                                    <div class="row justify-content-between mx-0">
+                                        <div class="col text-left">
+                                            {{ room.name }}
+                                        </div>
+                                        <div class="col-1 text-right">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </div>
+                                    </div>
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <Link href="/about-us">Go to about us</Link> <br>
-        <a href="/login">Go to Login</a>
+        <!-- <div class="container my-4">
+            <div class="row">
+                <div class="col-12 col-md-3 col-lg-4">
+                    <div class="border rounded p-3">
+                        <div v-for="room in rooms" :key="room.id" class="border p-2 rounded m-3" @click="changeRoom(room)" style="cursor: pointer">
+                            <div class="row justify-content-between mx-0">
+                                <div class="col text-left">
+                                    {{ room.name }}
+                                </div>
+                                <div class="col-1 text-right">
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-        <div class="row">
-            <div class="col-8">
+                <div class="col-12 col-md-9 col-lg-8">
+                    <div>
+                        <ChatBox :currentRoom="currentRoom" :user="user"/>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+
+        <!-- <div class="container">
+            <div class="row">
+                <div class="col-4">
                     <div class="card card-default">
-                    <div class="card-header">Messages</div>
+                        <div class="card-header">Users</div>
+                        <div class="card-body">
+                            <ul>
+                                <li class="py-2" v-for="(user, index) in users" :key="index">
+                                    {{ user.name }}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="col-8">
+                    <div class="card card-default">
+                        <div class="card-header">Messages</div>
                         <div class="card-body p-0">
                             <ul class="list-unstyled" style="height:300px; overflow-y:scroll">
                                 <li class="p-2" v-for="(message, index) in messages" :key="index" >
@@ -31,34 +90,26 @@
                         placeholder="Enter your message..."
                         class="form-control">
                     </div>
-                    <!-- <span class="text-muted" v-if="activeUser" >{{ activeUser.name }} is typing...</span> -->
-            </div>
-
-            <!-- <div class="col-4">
-                <div class="card card-default">
-                    <div class="card-header">Active Users</div>
-                    <div class="card-body">
-                        <ul>
-                            <li class="py-2" v-for="(user, index) in users" :key="index">
-                                {{ user.name }}
-                            </li>
-                        </ul>
-                    </div>
                 </div>
-            </div> -->
-        </div>
-    </div>
+            </div>
+        </div> -->
+    </Layout>
 </template>
 
 <script>
 import { Link } from '@inertiajs/inertia-vue'
+import Layout from '../Shared/Layout'
 export default {
     components: {
         Link,
+        Layout,
     },
     props: {
         test: String,
         user: Object,
+        users: Array,
+        rooms: Array,
+        chatData: Object,
     },
     data() {
         return {
@@ -67,52 +118,28 @@ export default {
             viewers: [],
             joinedUser: null,
             leavedUser: null,
+            currentRoom: this.chatData,
         }
     },
     mounted() {
-        this.fetchMessages();
         
-        Echo.channel('chat')
-        .listen('.chat-user', (data) => {
-            console.log('listening', data);
-            this.messages.push(data.chat);
-        });
-
-        Echo.join('chat')
-        .here((users) => {
-            console.log(users)
-        })
-        .joining((user) => {
-            this.viewers.push(user);
-        })
-        .leaving(user => {
-            console.log('leaving...', user);
-        });
-
-        // Echo.join('chat')
-        // .here(user => {
-        //     console.log('channel connected');
-        // })
-        // .joining(user => {
-        //     // this.users.push(user);
-        // })
-        // .leaving(user => {
-        //     // this.users = this.users.filter(u => u.id != user.id);
-        // })
-        // .listen('ChatEvent',(event) => {
-        //     this.messages.push(event.chat);
-        // })
-        // .listenForWhisper('typing', user => {
-        //     // this.activeUser = user;
-        //     // if(this.typingTimer) {
-        //     //     clearTimeout(this.typingTimer);
-        //     // }
-        //     // this.typingTimer = setTimeout(() => {
-        //     //     this.activeUser = false;
-        //     // }, 1000);
-        // })
     },
     methods: {
+        changeRoom(room) {
+            console.log(room)
+            
+            this.$inertia.reload();
+
+            axios.get(
+                route('chat', room.name)
+            )
+            .then((response) => {
+                console.log(response);
+                if (response.status === 200) {
+                    this.currentRoom = response.data.chatData;
+                }
+            });
+        },
         fetchMessages() {
             axios.get('messages').then(response => {
                 this.messages = response.data;
@@ -134,3 +161,8 @@ export default {
     }
 };
 </script>
+<style>
+.text-right {
+    text-align: right;
+}
+</style>

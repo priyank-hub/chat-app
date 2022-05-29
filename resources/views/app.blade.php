@@ -18,6 +18,9 @@
     <!-- Load the following for BootstrapVueIcons support -->
     <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue-icons.min.js"></script>
 
+    {{-- fontawesome --}}
+    <script src="https://kit.fontawesome.com/5652712d20.js" crossorigin="anonymous"></script>
+
     <link href="{{ mix('/css/app.css') }}" rel="stylesheet" />
     <script src="{{ mix('/js/app.js') }}" defer></script>
 

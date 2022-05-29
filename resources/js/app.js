@@ -58,6 +58,12 @@ import { createInertiaApp } from '@inertiajs/inertia-vue'
 import { InertiaProgress } from '@inertiajs/progress'
 import { BootstrapVue } from 'bootstrap-vue'
 
+Vue.mixin({
+    methods: {
+        route: route
+    }
+});
+
 // Make BootstrapVue available throughout your project
 Vue.use(BootstrapVue)
 
@@ -72,7 +78,7 @@ createInertiaApp({
         Vue.use(plugin)
 
         new Vue({
-        render: h => h(App, props),
+            render: h => h(App, props),
         }).$mount(el)
     },
 })

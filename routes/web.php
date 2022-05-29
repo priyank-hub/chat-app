@@ -25,7 +25,14 @@ use  App\Http\Controllers\ChatController;
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::get('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
 
 Route::get('/messages', [ChatController::class, 'fetchAllMessages']);
 Route::post('/messages', [ChatController::class, 'sendMessage']);
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/room/{room}',  [ChatController::class, 'renderChat'])->name('chat');
+    Route::post('/message/room/{room}', [ChatController::class, 'sendMessage'])->name('message');
+});

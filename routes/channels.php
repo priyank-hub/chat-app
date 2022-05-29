@@ -17,6 +17,6 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
 
-Broadcast::channel('chat', function($user){
-    return ['name' => $user->name]; //Return data as your need
+Broadcast::channel('chat.room.{id}', function($user){
+    return $user;
 });

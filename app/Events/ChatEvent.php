@@ -2,7 +2,10 @@
 
 namespace App\Events;
 
-use App\Models\Chat;
+use App\Models\User;
+use App\Models\Room;
+use App\Models\Message;
+
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -15,19 +18,25 @@ class ChatEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $chat;
+    public $user;
+    public $room;
+    public $message;
 
-    public function __construct(Chat $chat)
+    public function __construct(User $user, Room $room, Message $message)
     {
-        $this->chat = $chat;
+        $this->user = $user;
+        $this->room = $room;
+        $this->message = $message;
     }
 
     public function broadcastWith()
     {
         // This must always be an array. Since it will be parsed with json_encode()
-        return [
-            'chat' => $this->chat,
-        ];
+        // return [
+        //     'chat' => $this->chat,
+        // ];
+
+        return array_merge($this->message->toArray(), ['user' => $this->user->only('id', 'name')]);
     }
 
     public function broadcastAs()
@@ -37,6 +46,6 @@ class ChatEvent implements ShouldBroadcast
 
     public function broadcastOn()
     {
-        return new Channel('chat');
+        return new PresenceChannel('chat.room.' . $this->room->id);
     }
 }
