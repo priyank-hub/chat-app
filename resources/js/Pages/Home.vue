@@ -1,12 +1,12 @@
 <template>
     <Layout :user="user">
         <div class="container-fluid">
-            <div class="row justify-content-center align-items-center" style="min-height: 90vh; background-color: #7615a5;">
+            <div class="row justify-content-center align-items-center" style="min-height: 90vh; background-color: #4825a9;">
                 <div class="col-12 col-md-4">
                     <div class="card bg-white p-3">
                         <h3 class="mb-0">Rooms</h3>
                         <hr>
-                        <div class="my-3" style="max-height: 500px; overflow: auto">
+                        <div class="my-3" style="height: 420px; overflow: auto">
                             <div v-for="room in rooms" :key="room.id" class="border p-2 rounded my-2">
                                 <Link :href="route('chat', room.id)" class="text-dark" style="text-decoration: none">
                                     <div class="row justify-content-between mx-0">

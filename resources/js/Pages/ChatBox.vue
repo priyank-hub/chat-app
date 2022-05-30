@@ -1,6 +1,6 @@
 <template>
     <Layout :user="user">
-        <div class="row mx-0 justify-content-center align-items-center" style="min-height: 90vh; background-color: #7615a5;">
+        <div class="row mx-0 justify-content-center align-items-center" style="min-height: 90vh; background-color: #4825a9;">
             <div class="col-12 col-md-7">
                 <div class="card bg-white rounded py-3">
                     <h3 class="mb-0">{{ chatData.room.name }}</h3>
@@ -165,7 +165,7 @@ export default {
 }
 
 .message {
-    background-color: #7615a5;
+    background-color: #4825a9;
     color: white;
     border-radius: 10px;
     display: inline-block;
